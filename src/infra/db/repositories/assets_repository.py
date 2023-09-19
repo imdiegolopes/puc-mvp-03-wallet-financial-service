@@ -22,6 +22,13 @@ class AssetsRepository:
         self.client.disconnect()
         return result
 
+    def get_asset_by_id(self, asset_id):
+        self.client.connect()
+        query = "SELECT * FROM assets WHERE id = ?"
+        result = self.client.execute_query_single(query, [asset_id])
+        self.client.disconnect()
+        return result
+
     
     def create_asset(self, asset):
         self.client.connect()
@@ -41,6 +48,6 @@ class AssetsRepository:
     def delete_asset(self, asset_id):
         self.client.connect()
         query = "DELETE FROM assets WHERE id = ?"
-        result = self.client.execute_query_single(query, [asset_id])
+        result = self.client.execute_insert(query, [asset_id])
         self.client.disconnect()
         return result

@@ -1,13 +1,34 @@
 openapi: 3.0.0
 info:
-  title: Wallet User Identity API
+  title: Wallet Financial API Service
+  description: API service for managing financial assets
   version: 1.0.0
 servers:
   - url: http://localhost:8083
 paths:
-  /v1/login:
+  /v1/assets:
+    get:
+      summary: Retrieve a list of assets
+      parameters:
+        - name: user_id
+          in: query
+          description: ID of the user
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              example:
+                - user_id: 1
+                  name: "AAPL"
+                  type: "stock"
+                  quantity: 100
+                  value: 150.25
+                  purchase_on: "2023-09-15"
     post:
-      summary: Authenticate user and get access token
+      summary: Create a new asset
       requestBody:
         required: true
         content:
@@ -15,36 +36,114 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                user_id:
+                  type: integer
+                  description: ID of the user
+                name:
                   type: string
-                  description: The username of the user.
-                  example: diego 
-                password:
+                  description: Name of the asset
+                type:
                   type: string
-                  description: The user's password.
-                  example: diego 
+                  enum: ['stock', 'crypto', 'commodity', 'other']
+                  description: Type of the asset
+                quantity:
+                  type: number
+                  description: Quantity of the asset
+                value:
+                  type: number
+                  description: Value of the asset
+                purchase_on:
+                  type: string
+                  format: date
+                  description: Purchase date of the asset (YYYY-MM-DD)
+              required:
+                - user_id
+                - name
+                - type
+                - quantity
+                - value
+                - purchase_on
+            examples:
+              example1:
+                value:
+                  user_id: 1
+                  name: "AAPL"
+                  type: "stock"
+                  quantity: 100
+                  value: 150.25
+                  purchase_on: "2023-09-15"
       responses:
-        '200':
-          description: Successful login
+        '201':
+          description: Asset created successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  access_token:
+                  user_id:
+                    type: integer
+                    description: ID of the user
+                  name:
                     type: string
-                    description: The generated access token.
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-      tags:
-        - login
-
-  /v1/register:
-    post:
-      summary: Register a new user
+                    description: Name of the asset
+                  type:
+                    type: string
+                    enum: ['stock', 'crypto', 'commodity', 'other']
+                    description: Type of the asset
+                  quantity:
+                    type: number
+                    description: Quantity of the asset
+                  value:
+                    type: number
+                    description: Value of the asset
+                  purchase_on:
+                    type: string
+                    format: date
+                    description: Purchase date of the asset (YYYY-MM-DD)
+              example:
+                user_id: 1
+                name: "AAPL"
+                type: "stock"
+                quantity: 100
+                value: 150.25
+                purchase_on: "2023-09-15"
+  /v1/assets/{asset_id}:
+    get:
+      summary: Retrieve an asset by ID
+      parameters:
+        - name: asset_id
+          in: path
+          description: ID of the asset
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              example:
+                user_id: 1
+                name: "AAPL"
+                type: "stock"
+                quantity: 100
+                value: 150.25
+                purchase_on: "2023-09-15"
+        '404':
+          description: Asset not found
+          content:
+            application/json:
+              example:
+                error: "asset not found"
+    put:
+      summary: Update an existing asset
+      parameters:
+        - name: asset_id
+          in: path
+          description: ID of the asset
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -52,46 +151,96 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                user_id:
+                  type: integer
+                  description: ID of the user
+                name:
                   type: string
-                  description: The username of the new user.
-                  example: jane_doe
-                password:
+                  description: Name of the asset
+                type:
                   type: string
-                  description: The password for the new user.
-                  example: myothersecretpassword
-                email:
+                  enum: ['stock', 'crypto', 'commodity', 'other']
+                  description: Type of the asset
+                quantity:
+                  type: number
+                  description: Quantity of the asset
+                value:
+                  type: number
+                  description: Value of the asset
+                purchase_on:
                   type: string
-                  format: email
-                  description: The email address of the new user.
-                  example: jane@example.com
+                  format: date
+                  description: Purchase date of the asset (YYYY-MM-DD)
+              required:
+                - user_id
+                - name
+                - type
+                - quantity
+                - value
+                - purchase_on
+            examples:
+              example1:
+                value:
+                  user_id: 1
+                  name: "AAPL"
+                  type: "stock"
+                  quantity: 100
+                  value: 150.25
+                  purchase_on: "2023-09-15"
       responses:
         '200':
-          description: User created successfully
-        '400':
-          description: Bad request
-        '409':
-          description: User already exists
-        '500':
-          description: Internal server error
-
-      tags:
-        - register 
-  /v1/token/validate:
-    post:
-      summary: Validate access token
-      security:
-        - BearerAuth: []
+          description: Asset updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    description: ID of the user
+                  name:
+                    type: string
+                    description: Name of the asset
+                  type:
+                    type: string
+                    enum: ['stock', 'crypto', 'commodity', 'other']
+                    description: Type of the asset
+                  quantity:
+                    type: number
+                    description: Quantity of the asset
+                  value:
+                    type: number
+                    description: Value of the asset
+                  purchase_on:
+                    type: string
+                    format: date
+                    description: Purchase date of the asset (YYYY-MM-DD)
+              example:
+                user_id: 1
+                name: "AAPL"
+                type: "stock"
+                quantity: 100
+                value: 150.25
+                purchase_on: "2023-09-15"
+    delete:
+      summary: Delete an asset by ID
+      parameters:
+        - name: asset_id
+          in: path
+          description: ID of the asset
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Token is valid
-        '401':
-          description: Unauthorized
-      tags:
-        - token 
-
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
+          description: Asset deleted successfully
+          content:
+            application/json:
+              example:
+                message: "asset deleted"
+        '404':
+          description: Asset not found
+          content:
+            application/json:
+              example:
+                error: "asset not found"

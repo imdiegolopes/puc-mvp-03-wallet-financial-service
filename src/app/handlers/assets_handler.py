@@ -20,6 +20,19 @@ class AssetsHandler:
 
         return jsonify(assets)
 
+    def handle_get_assets_by_id(asset_id):
+        if asset_id is None:
+            return jsonify({'error': 'asset_id is required'}), 400
+
+        repository = AssetsRepository()
+
+        asset = repository.get_asset_by_id(asset_id)
+
+        if asset is None:
+            return jsonify({'error': 'asset not found'}), 404
+
+        return jsonify(asset), 200
+
 
     def handle_create_assets():
 
@@ -114,6 +127,11 @@ class AssetsHandler:
             return jsonify({'error': 'asset_id is required'}), 400
 
         repository = AssetsRepository()
+
+        asset = repository.get_asset_by_id(asset_id)
+
+        if asset is None:
+            return jsonify({'error': 'asset not found'}), 404
 
         delete = repository.delete_asset(asset_id)        
 
