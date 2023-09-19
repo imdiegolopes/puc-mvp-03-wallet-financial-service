@@ -59,6 +59,8 @@ class AssetsHandler:
         if result is None:
             return jsonify({'error': 'error on create asset'}), 500
 
+        asset['id'] = result
+
         return jsonify(asset), 201
 
 
@@ -90,7 +92,7 @@ class AssetsHandler:
         repository = AssetsRepository()
 
         asset = {
-            'id': asset_id, 
+            'id': asset_id,
             'user_id': body['user_id'],
             'name': body['name'],
             'type': body['type'],
@@ -102,9 +104,9 @@ class AssetsHandler:
         result = repository.update_asset(asset)
 
         if result is None:
-            return jsonify({'error': 'error on create asset'}), 500
+            return jsonify({'error': 'error on update asset'}), 500
 
-        return jsonify(asset), 201
+        return jsonify(asset), 200
 
 
     def handle_delete_assets(asset_id):

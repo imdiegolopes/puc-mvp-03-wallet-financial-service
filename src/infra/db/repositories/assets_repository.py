@@ -26,7 +26,7 @@ class AssetsRepository:
     def create_asset(self, asset):
         self.client.connect()
         query = "INSERT INTO assets (user_id, name, type, quantity, value, purchase_on) VALUES (?, ?, ?, ?, ?, ?)"
-        result = self.client.execute_query(query, [asset['user_id'], asset['name'], asset['type'], asset['quantity'], asset['value'], asset['purchase_on']])
+        result = self.client.execute_insert(query, [asset['user_id'], asset['name'], asset['type'], asset['quantity'], asset['value'], asset['purchase_on']])
         self.client.disconnect()
         return result
 
@@ -34,13 +34,13 @@ class AssetsRepository:
     def update_asset(self, asset):
         self.client.connect()
         query = "UPDATE assets SET name = ?, type = ?, quantity = ?, value = ?, purchase_on = ? WHERE id = ?"
-        result = self.client.execute_query(query, [asset['user_id'], asset['name'], asset['type'], asset['quantity'], asset['value'], asset['purchase_on']])
+        result = self.client.execute_insert(query, [asset['user_id'], asset['name'], asset['type'], asset['quantity'], asset['value'], asset['purchase_on']])
         self.client.disconnect()
         return result
 
     def delete_asset(self, asset_id):
         self.client.connect()
         query = "DELETE FROM assets WHERE id = ?"
-        result = self.client.execute_query(query, [asset_id])
+        result = self.client.execute_query_single(query, [asset_id])
         self.client.disconnect()
         return result
